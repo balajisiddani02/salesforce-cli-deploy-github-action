@@ -1,0 +1,95 @@
+name: Salesforce CLI Deploy
+description: >
+  GitHub Action for Salesforce CI/CD using Salesforce CLI.
+  Supports merge deployment, delta deployment, Apex test selection,
+  code scanning, and custom or destructive deployments.
+author: YourOrg
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        chmod +x ${{ github.action_path }}/entrypoint.sh
+        ${{ github.action_path }}/entrypoint.sh
+      env:
+        SFDX_AUTH_URL: ${{ inputs.sfdx_auth_url }}
+        ORG_ALIAS: ${{ inputs.org_alias }}
+        CLI_VERSION: ${{ inputs.cli_version }}
+        MERGE_DEPLOY: ${{ inputs.merge_deploy }}
+        SOURCE_BRANCH: ${{ inputs.source_branch }}
+        DELTA_DEPLOY: ${{ inputs.delta_deploy }}
+        RUN_SPECIFIED_TESTS: ${{ inputs.run_specified_tests }}
+        CODE_SCAN: ${{ inputs.code_scan }}
+        SCAN_RULES_PATH: ${{ inputs.scan_rules_path }}
+        SEVERITY_THRESHOLD: ${{ inputs.severity_threshold }}
+        OWN_DEPLOY: ${{ inputs.own_deploy }}
+        CUSTOM_DEPLOY_CMD: ${{ inputs.custom_deploy_command }}
+        FROM_REF: ${{ inputs.from_ref }}
+        TO_REF: ${{ inputs.to_ref }}
+
+inputs:
+  sfdx_auth_url:
+    description: Salesforce SFDX Auth URL
+    required: true
+
+  org_alias:
+    description: Salesforce org alias
+    required: true
+
+  cli_version:
+    description: Salesforce CLI version
+    required: false
+    default: latest
+
+  merge_deploy:
+    description: Merge source branch before delta generation
+    required: false
+    default: "false"
+
+  source_branch:
+    description: Source branch to merge
+    required: false
+
+  delta_deploy:
+    description: Run delta-based deployment
+    required: false
+    default: "true"
+
+  run_specified_tests:
+    description: Run RunSpecifiedTests if Apex tests are found
+    required: false
+    default: "false"
+
+  code_scan:
+    description: Run Salesforce Code Scanner
+    required: false
+    default: "false"
+
+  scan_rules_path:
+    description: Path to PMD ruleset file
+    required: false
+
+  severity_threshold:
+    description: Minimum PMD severity threshold
+    required: false
+    default: "3"
+
+  own_deploy:
+    description: Run custom deployment command
+    required: false
+    default: "false"
+
+  custom_deploy_command:
+    description: Custom deployment command
+    required: false
+
+  from_ref:
+    description: Git ref to start delta
+    required: false
+    default: HEAD~1
+
+  to_ref:
+    description: Git ref to end delta
+    required: false
+    default: HEAD
