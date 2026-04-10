@@ -1,0 +1,37 @@
+name: Test Salesforce CLI Deploy Action
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Salesforce CLI Deploy Action
+        uses: YOUR_GITHUB_ORG/salesforce-cli-deploy-github-action@v1
+        with:
+          sfdx_auth_url: ${{ secrets.SFDX_AUTH_URL }}
+          org_alias: dev
+          cli_version: latest
+
+          merge_deploy: false
+
+          delta_deploy: true
+          run_specified_tests: true
+
+          code_scan: false
+          scan_rules_path: config/pmd-ruleset.xml
+          severity_threshold: "3"
+
+          own_deploy: false
+          custom_deploy_command: ""
+
+          from_ref: HEAD~1
+          to_ref: HEAD
